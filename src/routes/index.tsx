@@ -169,55 +169,51 @@ function StackedCategories({
   setActiveCat: (id: string) => void;
   compact?: boolean;
 }) {
-  // seeded pseudo-random per id (stable across renders)
-  const rand = (seed: string, salt: number) => {
-    let h = 2166136261 ^ salt;
-    for (let i = 0; i < seed.length; i++) {
-      h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
-    }
-    return ((h >>> 0) % 1000) / 1000;
-  };
-  const heightPx = compact ? 44 : 56;
+  // Chunk categories into rows of varying sizes: 3, 2, 2, 3, 2, 2, ...
+  const rowPattern = [3, 2, 2];
+  const rows: { id: string; name: string }[][] = [];
+  let i = 0;
+  let p = 0;
+  while (i < categories.length) {
+    const n = rowPattern[p % rowPattern.length];
+    rows.push(categories.slice(i, i + n));
+    i += n;
+    p += 1;
+  }
   const fontSize = compact ? 10 : 12;
   return (
-    <div
-      className={compact ? "relative w-full" : "relative w-full hidden md:block"}
-      style={{ height: heightPx }}
+    <nav
+      className={compact ? "flex flex-col items-center gap-1" : "hidden md:flex flex-col items-center gap-1"}
       aria-label="Categories"
     >
-      {categories.map((c) => {
-        const dx = (rand(c.id, 1) - 0.5) * 2; // -1..1
-        const dy = (rand(c.id, 2) - 0.5) * 2;
-        const rot = (rand(c.id, 3) - 0.5) * 10; // -5..5 deg
-        const z = Math.floor(rand(c.id, 4) * 100);
-        const isActive = activeCat === c.id;
-        const left = 50 + dx * 28; // % from center
-        const top = 50 + dy * 30; // % within bar
-        return (
-          <button
-            key={c.id}
-            onClick={() => setActiveCat(c.id)}
-            className="absolute tracking-widest aquish-link whitespace-nowrap"
-            style={{
-              left: `${left}%`,
-              top: `${top}%`,
-              transform: `translate(-50%, -50%) rotate(${rot}deg)`,
-              fontSize,
-              opacity: isActive ? 1 : 0.35,
-              zIndex: isActive ? 999 : z,
-              background: "transparent",
-              border: "none",
-              padding: "2px 4px",
-              cursor: "pointer",
-            }}
-          >
-            {c.name}
-          </button>
-        );
-      })}
-    </div>
+      {rows.map((row, idx) => (
+        <div key={idx} className="flex justify-center gap-x-6">
+          {row.map((c) => {
+            const isActive = activeCat === c.id;
+            return (
+              <button
+                key={c.id}
+                onClick={() => setActiveCat(c.id)}
+                className="tracking-widest aquish-link whitespace-nowrap"
+                style={{
+                  fontSize,
+                  opacity: isActive ? 1 : 0.35,
+                  background: "transparent",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                }}
+              >
+                {c.name}
+              </button>
+            );
+          })}
+        </div>
+      ))}
+    </nav>
   );
 }
+
 
 
 function AccountLinks() {
