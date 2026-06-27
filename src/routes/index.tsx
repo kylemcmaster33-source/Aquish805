@@ -104,7 +104,7 @@ function Storefront() {
       </header>
 
       <main className={`flex-1 ${showCategories ? "pt-[96px] md:pt-16" : "pt-12"}`}>
-        <SaleBanner />
+        
         {showDrop && <DropBanner />}
         {visible.length === 0 ? (
           <div className="flex items-center justify-center h-[60vh] text-xs tracking-widest opacity-60">
@@ -136,20 +136,6 @@ function Storefront() {
   );
 }
 
-function SaleBanner() {
-  const { content } = useSiteContent();
-  if (content.sale_banner_on !== "1") return null;
-  const text = content.sale_banner_text?.trim();
-  if (!text) return null;
-  return (
-    <div
-      className="text-center py-2 text-[11px] tracking-[0.25em]"
-      style={{ background: "#000", color: "#fff" }}
-    >
-      {text}
-    </div>
-  );
-}
 
 function DropBanner() {
   const dropAt = useStore((s) => s.dropAt);
@@ -279,15 +265,7 @@ function ProductCard({
             -{salePct}%
           </div>
         )}
-        {dropping && (
-          <div
-            className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center px-3"
-            style={{ background: "rgba(245,244,240,0.92)", color: "#000" }}
-          >
-            <div className="text-[10px] tracking-[0.3em] opacity-70">DROPPING IN</div>
-            <DropTimer target={dropAt!} />
-          </div>
-        )}
+        {dropping && <DropBar target={dropAt!} />}
       </div>
       <div className="flex flex-col items-center gap-1 pt-[14px] pb-2 px-2" style={{ fontSize: "0.88em" }}>
         <div className="tracking-widest">{product.sku}</div>
@@ -314,6 +292,44 @@ function DropTimer({ target }: { target: string }) {
   return (
     <div className="text-sm md:text-base tracking-widest tabular-nums">
       {d > 0 && <>{d}D </>}{pad(h)}:{pad(m)}:{pad(s)}
+    </div>
+  );
+}
+
+function DropBar({ target }: { target: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const WINDOW = 2 * 60 * 60 * 1000; // 2 hours
+  const diff = Math.max(0, new Date(target).getTime() - now);
+  const pct = Math.min(100, (diff / WINDOW) * 100);
+  const h = Math.floor((diff / 3600000));
+  const m = Math.floor((diff / 60000) % 60);
+  const s = Math.floor((diff / 1000) % 60);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    <div
+      className="absolute left-0 right-0 bottom-0 flex flex-col"
+      style={{ pointerEvents: "none" }}
+    >
+      <div
+        className="text-center py-1 text-[10px] tracking-[0.3em] tabular-nums"
+        style={{ background: "rgba(0,0,0,0.75)", color: "#fff" }}
+      >
+        DROPPING IN {pad(h)}:{pad(m)}:{pad(s)}
+      </div>
+      <div style={{ height: 4, background: "rgba(0,0,0,0.25)" }}>
+        <div
+          style={{
+            width: `${pct}%`,
+            height: "100%",
+            background: "#000",
+            transition: "width 1s linear",
+          }}
+        />
+      </div>
     </div>
   );
 }

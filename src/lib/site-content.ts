@@ -22,9 +22,6 @@ export const DEFAULT_CONTENT: ContentMap = {
   ui_link_terms: "1",
   ui_link_privacy: "1",
   drop_at: "",
-  // Sale banner
-  sale_banner_on: "0",
-  sale_banner_text: "",
 };
 
 
@@ -109,7 +106,6 @@ export const CONTENT_FIELDS: { key: string; label: string; multiline?: boolean }
   
   { key: "terms_body", label: "TERMS OF SERVICE", multiline: true },
   { key: "privacy_body", label: "PRIVACY POLICY", multiline: true },
-  { key: "sale_banner_text", label: "SALE BANNER TEXT (E.G. '80% OFF — ENDS SOON')" },
 ];
 
 
