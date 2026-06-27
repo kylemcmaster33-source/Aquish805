@@ -17,7 +17,16 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { getMyAdminStatus, claimAdminRole } from "@/lib/auth.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { useSiteContent, saveContent, CONTENT_FIELDS, UI_TOGGLES } from "@/lib/site-content";
+import {
+  useSiteContent,
+  saveContent,
+  CONTENT_FIELDS,
+  UI_TOGGLES,
+  productSaleKey,
+  productDropKey,
+  getProductSale,
+  getProductDrop,
+} from "@/lib/site-content";
 
 
 export const Route = createFileRoute("/admin")({
@@ -332,8 +341,17 @@ function ProductEditor({
   onClose: () => void;
   onSave: (p: Product) => void;
 }) {
+  const { content } = useSiteContent();
   const [p, setP] = useState<Product>(initial);
   const [sizesText, setSizesText] = useState(initial.sizes.join(", "));
+  const [salePct, setSalePct] = useState<string>(() => {
+    const v = getProductSale(content, initial.id);
+    return v ? String(v) : "";
+  });
+  const [dropAtLocal, setDropAtLocal] = useState<string>(() => {
+    const v = getProductDrop(content, initial.id);
+    return v ? v.slice(0, 16) : "";
+  });
 
   const fileToDataUrl = (file: File): Promise<string> =>
     new Promise((res, rej) => {
@@ -491,10 +509,40 @@ function ProductEditor({
           ))}
         </div>
 
+        <div className="grid grid-cols-2 gap-3 mt-2">
+          <Field label="SALE % OFF (0 = NONE)">
+            <input
+              type="number"
+              min={0}
+              max={99}
+              value={salePct}
+              onChange={(e) => setSalePct(e.target.value)}
+              placeholder="0"
+              className="ai"
+            />
+          </Field>
+          <Field label="DROP AT (LOCAL — BLANK = NONE)">
+            <input
+              type="datetime-local"
+              value={dropAtLocal}
+              onChange={(e) => setDropAtLocal(e.target.value)}
+              className="ai"
+            />
+          </Field>
+        </div>
+
         <div className="flex gap-2 mt-4">
           <button onClick={onClose} className="aquish-hover px-3 py-2 flex-1" style={{ border: "1px solid #000" }}>CANCEL</button>
           <button
-            onClick={() => onSave(p)}
+            onClick={async () => {
+              const pct = Math.max(0, Math.min(99, parseInt(salePct, 10) || 0));
+              await saveContent(productSaleKey(p.id), pct > 0 ? String(pct) : "");
+              await saveContent(
+                productDropKey(p.id),
+                dropAtLocal ? new Date(dropAtLocal).toISOString() : "",
+              );
+              onSave(p);
+            }}
             className="aquish-hover px-3 py-2 flex-1"
             style={{ background: "#000", color: "#fff", border: "none" }}
           >

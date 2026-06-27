@@ -10,7 +10,7 @@ import {
 } from "@/lib/store";
 import { useCurrency, parsePrice } from "@/lib/currency";
 import { useAuth } from "@/hooks/use-auth";
-import { useSiteContent } from "@/lib/site-content";
+import { useSiteContent, getProductSale, getProductDrop, discountedPrice, type ContentMap } from "@/lib/site-content";
 import { Footer } from "@/components/Footer";
 import { Countdown } from "@/components/Countdown";
 
@@ -116,6 +116,7 @@ function Storefront() {
               <ProductCard
                 key={p.id}
                 product={p}
+                content={content}
                 onClick={() => navigate({ to: "/product/$sku", params: { sku: p.sku } })}
               />
             ))}
@@ -231,29 +232,34 @@ function AccountLinks() {
 
 
 function ProductCard({
-
   product,
+  content,
   onClick,
 }: {
   product: Product;
+  content: ContentMap;
   onClick: () => void;
 }) {
   const img = product.colors[0]?.image;
   const soldOut = product.stock <= 0;
   const lowStock = !soldOut && product.stock <= product.lowStockThreshold;
+  const salePct = getProductSale(content, product.id);
+  const dropAt = getProductDrop(content, product.id);
+  const dropping = !!dropAt;
+  const clickable = !soldOut && !dropping;
   return (
     <button
-      onClick={soldOut ? undefined : onClick}
+      onClick={clickable ? onClick : undefined}
       className="aquish-card text-center focus:outline-none flex flex-col"
       style={{
         border: "none",
         padding: 0,
         background: "transparent",
-        cursor: soldOut ? "not-allowed" : "pointer",
+        cursor: clickable ? "pointer" : "not-allowed",
       }}
     >
       <div
-        className="aquish-card-imgwrap aspect-square w-full overflow-hidden"
+        className="aquish-card-imgwrap aspect-square w-full overflow-hidden relative"
         style={{ opacity: soldOut ? 0.55 : 1 }}
       >
         {img ? (
@@ -265,14 +271,50 @@ function ProductCard({
         ) : (
           <div className="w-full h-full" style={{ background: "#e5e3df" }} />
         )}
+        {salePct > 0 && !dropping && (
+          <div
+            className="absolute top-2 left-2 px-2 py-1 text-[10px] tracking-widest"
+            style={{ background: "#000", color: "#fff" }}
+          >
+            -{salePct}%
+          </div>
+        )}
+        {dropping && (
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center px-3"
+            style={{ background: "rgba(245,244,240,0.92)", color: "#000" }}
+          >
+            <div className="text-[10px] tracking-[0.3em] opacity-70">DROPPING IN</div>
+            <DropTimer target={dropAt!} />
+          </div>
+        )}
       </div>
       <div className="flex flex-col items-center gap-1 pt-[14px] pb-2 px-2" style={{ fontSize: "0.88em" }}>
         <div className="tracking-widest">{product.sku}</div>
         {soldOut && <div className="tracking-widest opacity-70" style={{ fontSize: "0.85em" }}>SOLD OUT</div>}
-        {lowStock && <div className="tracking-widest opacity-60" style={{ fontSize: "0.85em" }}>LOW STOCK</div>}
+        {lowStock && !dropping && <div className="tracking-widest opacity-60" style={{ fontSize: "0.85em" }}>LOW STOCK</div>}
       </div>
 
     </button>
+  );
+}
+
+function DropTimer({ target }: { target: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const diff = Math.max(0, new Date(target).getTime() - now);
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff / 3600000) % 24);
+  const m = Math.floor((diff / 60000) % 60);
+  const s = Math.floor((diff / 1000) % 60);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    <div className="text-sm md:text-base tracking-widest tabular-nums">
+      {d > 0 && <>{d}D </>}{pad(h)}:{pad(m)}:{pad(s)}
+    </div>
   );
 }
 
@@ -295,6 +337,9 @@ export function QuickView({
   const [infoOpen, setInfoOpen] = useState(false);
   const [addedFlash, setAddedFlash] = useState(false);
   const soldOut = product.stock <= 0;
+  const { content } = useSiteContent();
+  const salePct = getProductSale(content, product.id);
+  const displayPrice = salePct > 0 ? discountedPrice(product.price, salePct) : product.price;
 
   // Reset state when product changes
   useEffect(() => {
@@ -469,7 +514,15 @@ export function QuickView({
 
       {/* Centered stacked: PRICE / INFORMATION / ADD TO BAG — lifted ~40% */}
       <div className="flex flex-col items-center gap-2 pb-[18vh] pt-2 text-sm tracking-widest">
-        <div>{currency.format(product.price)}</div>
+        {salePct > 0 ? (
+          <div className="flex items-center gap-2">
+            <span className="opacity-50 line-through">{currency.format(product.price)}</span>
+            <span>{currency.format(displayPrice)}</span>
+            <span className="text-[10px] tracking-widest" style={{ background: "#000", color: "#fff", padding: "2px 6px" }}>-{salePct}%</span>
+          </div>
+        ) : (
+          <div>{currency.format(product.price)}</div>
+        )}
         <button
           onClick={() => setInfoOpen(true)}
           className="aquish-link"
@@ -588,7 +641,17 @@ export function QuickView({
             </div>
             <div className="text-xs opacity-70">SKU — {product.sku}</div>
             <div className="text-xs opacity-70">PRODUCT ID — {product.id}</div>
-            <div className="text-xs">{currency.format(product.price)}</div>
+            <div className="text-xs">
+              {salePct > 0 ? (
+                <>
+                  <span className="opacity-50 line-through mr-2">{currency.format(product.price)}</span>
+                  <span>{currency.format(displayPrice)}</span>
+                  <span className="ml-2" style={{ background: "#000", color: "#fff", padding: "1px 5px", fontSize: 10 }}>-{salePct}%</span>
+                </>
+              ) : (
+                currency.format(product.price)
+              )}
+            </div>
             <div
               className="flex flex-col gap-2 pt-3"
               style={{ borderTop: "1px solid #000" }}
@@ -631,6 +694,7 @@ function BagDrawer({
 }) {
   const bag = useStore((s) => s.bag);
   const products = useStore((s) => s.products);
+  const { content } = useSiteContent();
   const navigate = useNavigate();
 
   const items = bag.map((b, i) => {
@@ -673,7 +737,9 @@ function BagDrawer({
             <div className="p-8 text-xs tracking-widest opacity-60">EMPTY</div>
           )}
           {items.map(({ i, b, p, c }) => {
-            const parsed = p ? parsePrice(p.price) : null;
+            const salePct = p ? getProductSale(content, p.id) : 0;
+            const effectivePrice = p && salePct > 0 ? discountedPrice(p.price, salePct) : p?.price ?? "";
+            const parsed = effectivePrice ? parsePrice(effectivePrice) : null;
             const lineStr =
               p && parsed
                 ? currency.format(`${parsed.code} ${(parsed.amount * b.qty).toFixed(2)}`)
