@@ -85,7 +85,7 @@ export const CONTENT_FIELDS: { key: string; label: string; multiline?: boolean }
 
 export const FOOTER_LINKS: { key: string; label: string; to: string }[] = [
   { key: "ui_link_shipping", label: "SHIPPING", to: "/shipping" },
-  { key: "ui_link_returns", label: "RETURNS", to: "/returns" },
+  
   { key: "ui_link_about", label: "ABOUT", to: "/about" },
   { key: "ui_link_contact", label: "CONTACT", to: "/contact" },
   { key: "ui_link_terms", label: "TERMS", to: "/terms" },
