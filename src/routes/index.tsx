@@ -111,7 +111,7 @@ function Storefront() {
             NO PRODUCTS
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-2 gap-y-10 px-2 py-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-3 gap-y-10 px-5 md:px-10 py-6">
             {visible.map((p) => (
               <ProductCard
                 key={p.id}
