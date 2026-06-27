@@ -19,7 +19,7 @@ function Page() {
         <Link to="/" className="aquish-link text-xs tracking-widest">← AQUISH</Link>
       </header>
       <main className="flex-1 max-w-2xl mx-auto px-6 py-16 flex flex-col gap-6 tracking-widest leading-relaxed" style={{ fontSize: 10, fontWeight: 400 }}>
-        <h1 style={{ fontSize: 6, opacity: 0.6, fontWeight: 400, letterSpacing: "0.0253em" }}>TERMS OF SERVICE</h1>
+        <h1 style={{ fontSize: 6, opacity: 0.6, fontWeight: 400, letterSpacing: "0.0506em" }}>TERMS OF SERVICE</h1>
         <p style={{ whiteSpace: "pre-wrap" }}>{content.terms_body}</p>
       </main>
     </div>
