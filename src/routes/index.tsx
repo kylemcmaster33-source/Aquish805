@@ -337,6 +337,9 @@ export function QuickView({
   const [infoOpen, setInfoOpen] = useState(false);
   const [addedFlash, setAddedFlash] = useState(false);
   const soldOut = product.stock <= 0;
+  const { content } = useSiteContent();
+  const salePct = getProductSale(content, product.id);
+  const displayPrice = salePct > 0 ? discountedPrice(product.price, salePct) : product.price;
 
   // Reset state when product changes
   useEffect(() => {
