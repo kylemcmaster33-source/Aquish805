@@ -66,6 +66,21 @@ function AuthPage() {
     }
   };
 
+  const signInWithGoogle = async () => {
+    setBusy(true);
+    setMsg(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setMsg(err?.message ?? "GOOGLE SIGN-IN FAILED");
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="min-h-screen aquish-bg flex items-center justify-center px-6">
       <form onSubmit={submit} className="w-full max-w-sm flex flex-col gap-5 text-sm tracking-widest">
@@ -74,6 +89,22 @@ function AuthPage() {
           <button type="button" onClick={() => setMode("signin")} className={mode === "signin" ? "underline underline-offset-4" : "aquish-link"}>SIGN IN</button>
           <button type="button" onClick={() => setMode("signup")} className={mode === "signup" ? "underline underline-offset-4" : "aquish-link"}>CREATE ACCOUNT</button>
         </div>
+        <button
+          type="button"
+          onClick={signInWithGoogle}
+          disabled={busy}
+          className="py-3 text-xs tracking-widest disabled:opacity-40 flex items-center justify-center gap-2"
+          style={{ background: "#fff", color: "#000", border: "1px solid #000" }}
+        >
+          <span aria-hidden style={{ fontWeight: 600 }}>G</span>
+          CONTINUE WITH GOOGLE
+        </button>
+        <div className="flex items-center gap-3 text-[10px] opacity-50">
+          <div style={{ flex: 1, height: 1, background: "#000", opacity: 0.3 }} />
+          OR
+          <div style={{ flex: 1, height: 1, background: "#000", opacity: 0.3 }} />
+        </div>
+
         <label className="flex flex-col gap-1 text-xs">
           EMAIL
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="aquish-input" />
