@@ -296,6 +296,44 @@ function DropTimer({ target }: { target: string }) {
   );
 }
 
+function DropBar({ target }: { target: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const WINDOW = 2 * 60 * 60 * 1000; // 2 hours
+  const diff = Math.max(0, new Date(target).getTime() - now);
+  const pct = Math.min(100, (diff / WINDOW) * 100);
+  const h = Math.floor((diff / 3600000));
+  const m = Math.floor((diff / 60000) % 60);
+  const s = Math.floor((diff / 1000) % 60);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    <div
+      className="absolute left-0 right-0 bottom-0 flex flex-col"
+      style={{ pointerEvents: "none" }}
+    >
+      <div
+        className="text-center py-1 text-[10px] tracking-[0.3em] tabular-nums"
+        style={{ background: "rgba(0,0,0,0.75)", color: "#fff" }}
+      >
+        DROPPING IN {pad(h)}:{pad(m)}:{pad(s)}
+      </div>
+      <div style={{ height: 4, background: "rgba(0,0,0,0.25)" }}>
+        <div
+          style={{
+            width: `${pct}%`,
+            height: "100%",
+            background: "#000",
+            transition: "width 1s linear",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function QuickView({
   product,
   onClose,
