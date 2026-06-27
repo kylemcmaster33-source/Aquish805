@@ -514,7 +514,15 @@ export function QuickView({
 
       {/* Centered stacked: PRICE / INFORMATION / ADD TO BAG — lifted ~40% */}
       <div className="flex flex-col items-center gap-2 pb-[18vh] pt-2 text-sm tracking-widest">
-        <div>{currency.format(product.price)}</div>
+        {salePct > 0 ? (
+          <div className="flex items-center gap-2">
+            <span className="opacity-50 line-through">{currency.format(product.price)}</span>
+            <span>{currency.format(displayPrice)}</span>
+            <span className="text-[10px] tracking-widest" style={{ background: "#000", color: "#fff", padding: "2px 6px" }}>-{salePct}%</span>
+          </div>
+        ) : (
+          <div>{currency.format(product.price)}</div>
+        )}
         <button
           onClick={() => setInfoOpen(true)}
           className="aquish-link"
