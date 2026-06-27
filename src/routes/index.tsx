@@ -71,7 +71,7 @@ function Storefront() {
     <div className="min-h-screen aquish-bg flex flex-col">
       <header
         className="fixed top-0 left-0 right-0 z-40 aquish-bg"
-        style={{ borderBottom: "1px solid #000" }}
+        style={{ borderBottom: "1px solid rgba(0,0,0,0.2)" }}
       >
         <div className="grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-3 md:px-4 min-h-12 py-2 gap-2">
           <div className="text-[11px] md:text-sm tracking-widest truncate">AQUISH</div>
@@ -111,7 +111,7 @@ function Storefront() {
             NO PRODUCTS
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-2 gap-y-10 px-2 py-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-3 gap-y-10 px-5 md:px-10 py-6">
             {visible.map((p) => (
               <ProductCard
                 key={p.id}
@@ -180,7 +180,8 @@ function StackedCategories({
     i += n;
     p += 1;
   }
-  const fontSize = compact ? 10 : 12;
+  // Categories sit ~5% larger than the SKU label on the product cards.
+  const fontSize = compact ? 11 : 13;
   return (
     <nav
       className={compact ? "flex flex-col items-center gap-1" : "hidden md:flex flex-col items-center gap-1"}
@@ -264,8 +265,8 @@ function ProductCard({
           <div className="w-full h-full" style={{ background: "#e5e3df" }} />
         )}
       </div>
-      <div className="flex flex-col items-center gap-1 pt-4 pb-2 px-2" style={{ fontSize: "0.88em" }}>
-        <div className="tracking-widest">{product.sku}</div>
+      <div className="flex flex-col items-center gap-1 pt-[14px] pb-2 px-2" style={{ fontSize: "0.88em" }}>
+        <div className="tracking-widest" style={{ fontWeight: 500 }}>{product.sku}</div>
         {soldOut && <div className="tracking-widest opacity-70" style={{ fontSize: "0.85em" }}>SOLD OUT</div>}
         {lowStock && <div className="tracking-widest opacity-60" style={{ fontSize: "0.85em" }}>LOW STOCK</div>}
       </div>
@@ -585,6 +586,7 @@ export function QuickView({
               </button>
             </div>
             <div className="text-xs opacity-70">SKU — {product.sku}</div>
+            <div className="text-xs opacity-70">PRODUCT ID — {product.id}</div>
             <div className="text-xs">{currency.format(product.price)}</div>
             <div
               className="flex flex-col gap-2 pt-3"
