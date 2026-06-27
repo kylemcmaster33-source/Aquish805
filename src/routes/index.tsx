@@ -641,7 +641,17 @@ export function QuickView({
             </div>
             <div className="text-xs opacity-70">SKU — {product.sku}</div>
             <div className="text-xs opacity-70">PRODUCT ID — {product.id}</div>
-            <div className="text-xs">{currency.format(product.price)}</div>
+            <div className="text-xs">
+              {salePct > 0 ? (
+                <>
+                  <span className="opacity-50 line-through mr-2">{currency.format(product.price)}</span>
+                  <span>{currency.format(displayPrice)}</span>
+                  <span className="ml-2" style={{ background: "#000", color: "#fff", padding: "1px 5px", fontSize: 10 }}>-{salePct}%</span>
+                </>
+              ) : (
+                currency.format(product.price)
+              )}
+            </div>
             <div
               className="flex flex-col gap-2 pt-3"
               style={{ borderTop: "1px solid #000" }}
