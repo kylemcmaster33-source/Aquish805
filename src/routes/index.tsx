@@ -157,6 +157,69 @@ function DropBanner() {
 }
 
 
+
+function StackedCategories({
+  categories,
+  activeCat,
+  setActiveCat,
+  compact = false,
+}: {
+  categories: { id: string; name: string }[];
+  activeCat: string | null;
+  setActiveCat: (id: string) => void;
+  compact?: boolean;
+}) {
+  // seeded pseudo-random per id (stable across renders)
+  const rand = (seed: string, salt: number) => {
+    let h = 2166136261 ^ salt;
+    for (let i = 0; i < seed.length; i++) {
+      h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
+    }
+    return ((h >>> 0) % 1000) / 1000;
+  };
+  const heightPx = compact ? 44 : 56;
+  const fontSize = compact ? 10 : 12;
+  return (
+    <div
+      className={compact ? "relative w-full" : "relative w-full hidden md:block"}
+      style={{ height: heightPx }}
+      aria-label="Categories"
+    >
+      {categories.map((c) => {
+        const dx = (rand(c.id, 1) - 0.5) * 2; // -1..1
+        const dy = (rand(c.id, 2) - 0.5) * 2;
+        const rot = (rand(c.id, 3) - 0.5) * 10; // -5..5 deg
+        const z = Math.floor(rand(c.id, 4) * 100);
+        const isActive = activeCat === c.id;
+        const left = 50 + dx * 28; // % from center
+        const top = 50 + dy * 30; // % within bar
+        return (
+          <button
+            key={c.id}
+            onClick={() => setActiveCat(c.id)}
+            className="absolute tracking-widest aquish-link whitespace-nowrap"
+            style={{
+              left: `${left}%`,
+              top: `${top}%`,
+              transform: `translate(-50%, -50%) rotate(${rot}deg)`,
+              fontSize,
+              opacity: isActive ? 1 : 0.35,
+              zIndex: isActive ? 999 : z,
+              background: "transparent",
+              border: "none",
+              padding: "2px 4px",
+              cursor: "pointer",
+            }}
+          >
+            {c.name}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+
 function AccountLinks() {
   const { user } = useAuth();
   if (!user) return <Link to="/auth" className="aquish-link">ACCOUNT</Link>;
