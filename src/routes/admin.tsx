@@ -217,7 +217,7 @@ function Admin() {
           </form>
 
           <DropControl />
-          <SaleBannerControl />
+          
           <DiscountCodes />
           <AdminInviteCodes />
           <UIToggles />
@@ -808,45 +808,6 @@ function UIToggles() {
   );
 }
 
-function SaleBannerControl() {
-  const { content, refresh } = useSiteContent();
-  const [text, setText] = useState(content.sale_banner_text ?? "");
-  const [busy, setBusy] = useState(false);
-  useEffect(() => { setText(content.sale_banner_text ?? ""); }, [content.sale_banner_text]);
-  const on = content.sale_banner_on === "1";
-  const save = async () => {
-    setBusy(true);
-    await saveContent("sale_banner_text", text);
-    await refresh();
-    setBusy(false);
-  };
-  const toggle = async () => {
-    setBusy(true);
-    await saveContent("sale_banner_on", on ? "0" : "1");
-    await refresh();
-    setBusy(false);
-  };
-  return (
-    <div className="flex flex-col gap-2 mt-6 pt-4" style={{ borderTop: "1px solid #000" }}>
-      <div className="flex items-center justify-between">
-        <span>SALE BANNER</span>
-        <button onClick={toggle} disabled={busy} className="aquish-hover px-2 py-1 text-[10px]" style={{ border: "1px solid #000", background: on ? "#000" : "transparent", color: on ? "#fff" : "#000" }}>
-          {on ? "ON" : "OFF"}
-        </button>
-      </div>
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="80% OFF — ENDS SOON"
-        className="px-2 py-2 bg-transparent text-xs tracking-widest"
-        style={{ border: "1px solid #000" }}
-      />
-      <button onClick={save} disabled={busy} className="aquish-hover px-3 py-2" style={{ background: "#000", color: "#fff", border: "none" }}>
-        SAVE TEXT
-      </button>
-    </div>
-  );
-}
 
 type AdminInviteRow = {
   id: string;
