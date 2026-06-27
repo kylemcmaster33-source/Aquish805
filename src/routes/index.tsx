@@ -73,7 +73,7 @@ function Storefront() {
         className="fixed top-0 left-0 right-0 z-40 aquish-bg"
         style={{ borderBottom: "1px solid #000" }}
       >
-        <div className="grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-3 md:px-4 h-12 gap-2">
+        <div className="grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-3 md:px-4 min-h-12 py-2 gap-2">
           <div className="text-[11px] md:text-sm tracking-widest truncate">AQUISH</div>
           {showCategories && (
             <nav className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-1 max-w-full">
