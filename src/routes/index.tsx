@@ -694,6 +694,7 @@ function BagDrawer({
 }) {
   const bag = useStore((s) => s.bag);
   const products = useStore((s) => s.products);
+  const { content } = useSiteContent();
   const navigate = useNavigate();
 
   const items = bag.map((b, i) => {
@@ -736,7 +737,9 @@ function BagDrawer({
             <div className="p-8 text-xs tracking-widest opacity-60">EMPTY</div>
           )}
           {items.map(({ i, b, p, c }) => {
-            const parsed = p ? parsePrice(p.price) : null;
+            const salePct = p ? getProductSale(content, p.id) : 0;
+            const effectivePrice = p && salePct > 0 ? discountedPrice(p.price, salePct) : p?.price ?? "";
+            const parsed = effectivePrice ? parsePrice(effectivePrice) : null;
             const lineStr =
               p && parsed
                 ? currency.format(`${parsed.code} ${(parsed.amount * b.qty).toFixed(2)}`)
