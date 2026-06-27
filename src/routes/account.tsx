@@ -151,11 +151,11 @@ function AccountPage() {
             <>
               <div className="text-sm">SUPPORT</div>
               <p className="leading-relaxed">
-                FOR ANY ISSUE WITH AN ORDER, RETURN, OR PRODUCT, REACH OUT BELOW. WE REPLY WITHIN 1–2 BUSINESS DAYS.
+                FOR ANY ISSUE WITH AN ORDER OR PRODUCT, REACH OUT BELOW. WE REPLY WITHIN 1–2 BUSINESS DAYS.
               </p>
-              <Row label="GENERAL" value="HELLO@AQUISH.COM" />
-              <Row label="ORDERS" value="ORDERS@AQUISH.COM" />
-              <Row label="RETURNS" value="RETURNS@AQUISH.COM" />
+              <Row label="GENERAL" value="AQUISHCLOTHING@GMAIL.COM" />
+              <Row label="ORDERS" value="AQUISHCLOTHING@GMAIL.COM" />
+
               <a
                 href="mailto:hello@aquish.com"
                 className="mt-2 py-3 px-4 text-xs tracking-widest aquish-btn-primary inline-block text-center"
