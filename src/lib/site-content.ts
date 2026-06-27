@@ -31,9 +31,26 @@ export const DEFAULT_CONTENT: ContentMap = {
 };
 
 const CONTENT_KEYS = Object.keys(DEFAULT_CONTENT);
+const CACHE_KEY = "aquish.site_content.v1";
+
+function readCache(): ContentMap | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as ContentMap;
+    const next: ContentMap = { ...DEFAULT_CONTENT, ...parsed };
+    return next;
+  } catch { return null; }
+}
+
+function writeCache(map: ContentMap) {
+  if (typeof window === "undefined") return;
+  try { window.localStorage.setItem(CACHE_KEY, JSON.stringify(map)); } catch { /* ignore */ }
+}
 
 export function useSiteContent() {
-  const [content, setContent] = useState<ContentMap>(DEFAULT_CONTENT);
+  const [content, setContent] = useState<ContentMap>(() => readCache() ?? DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
@@ -42,6 +59,7 @@ export function useSiteContent() {
     for (const row of data ?? []) next[row.key] = row.value ?? "";
     for (const k of CONTENT_KEYS) if (!(k in next)) next[k] = DEFAULT_CONTENT[k];
     setContent(next);
+    writeCache(next);
     setLoading(false);
   }, []);
 
