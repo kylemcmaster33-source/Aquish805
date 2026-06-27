@@ -17,7 +17,16 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { getMyAdminStatus, claimAdminRole } from "@/lib/auth.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { useSiteContent, saveContent, CONTENT_FIELDS, UI_TOGGLES } from "@/lib/site-content";
+import {
+  useSiteContent,
+  saveContent,
+  CONTENT_FIELDS,
+  UI_TOGGLES,
+  productSaleKey,
+  productDropKey,
+  getProductSale,
+  getProductDrop,
+} from "@/lib/site-content";
 
 
 export const Route = createFileRoute("/admin")({
@@ -332,8 +341,17 @@ function ProductEditor({
   onClose: () => void;
   onSave: (p: Product) => void;
 }) {
+  const { content } = useSiteContent();
   const [p, setP] = useState<Product>(initial);
   const [sizesText, setSizesText] = useState(initial.sizes.join(", "));
+  const [salePct, setSalePct] = useState<string>(() => {
+    const v = getProductSale(content, initial.id);
+    return v ? String(v) : "";
+  });
+  const [dropAtLocal, setDropAtLocal] = useState<string>(() => {
+    const v = getProductDrop(content, initial.id);
+    return v ? v.slice(0, 16) : "";
+  });
 
   const fileToDataUrl = (file: File): Promise<string> =>
     new Promise((res, rej) => {
