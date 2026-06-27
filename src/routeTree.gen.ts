@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ShippingRouteImport } from './routes/shipping'
-import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
@@ -32,11 +31,6 @@ const TermsRoute = TermsRouteImport.update({
 const ShippingRoute = ShippingRouteImport.update({
   id: '/shipping',
   path: '/shipping',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReturnsRoute = ReturnsRouteImport.update({
-  id: '/returns',
-  path: '/returns',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -104,7 +98,6 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRouteWithChildren
   '/contact': typeof ContactRoute
   '/privacy': typeof PrivacyRoute
-  '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
   '/terms': typeof TermsRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -120,7 +113,6 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRouteWithChildren
   '/contact': typeof ContactRoute
   '/privacy': typeof PrivacyRoute
-  '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
   '/terms': typeof TermsRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -137,7 +129,6 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRouteWithChildren
   '/contact': typeof ContactRoute
   '/privacy': typeof PrivacyRoute
-  '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
   '/terms': typeof TermsRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -155,7 +146,6 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/privacy'
-    | '/returns'
     | '/shipping'
     | '/terms'
     | '/checkout/success'
@@ -171,7 +161,6 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/privacy'
-    | '/returns'
     | '/shipping'
     | '/terms'
     | '/checkout/success'
@@ -187,7 +176,6 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/privacy'
-    | '/returns'
     | '/shipping'
     | '/terms'
     | '/checkout/success'
@@ -204,7 +192,6 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRouteWithChildren
   ContactRoute: typeof ContactRoute
   PrivacyRoute: typeof PrivacyRoute
-  ReturnsRoute: typeof ReturnsRoute
   ShippingRoute: typeof ShippingRoute
   TermsRoute: typeof TermsRoute
   ProductSkuRoute: typeof ProductSkuRoute
@@ -225,13 +212,6 @@ declare module '@tanstack/react-router' {
       path: '/shipping'
       fullPath: '/shipping'
       preLoaderRoute: typeof ShippingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/returns': {
-      id: '/returns'
-      path: '/returns'
-      fullPath: '/returns'
-      preLoaderRoute: typeof ReturnsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -335,7 +315,6 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRouteWithChildren,
   ContactRoute: ContactRoute,
   PrivacyRoute: PrivacyRoute,
-  ReturnsRoute: ReturnsRoute,
   ShippingRoute: ShippingRoute,
   TermsRoute: TermsRoute,
   ProductSkuRoute: ProductSkuRoute,
