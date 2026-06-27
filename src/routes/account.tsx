@@ -119,7 +119,7 @@ function AccountPage() {
               {orders && orders.map((o) => (
                 <div key={o.id} className="flex flex-col gap-1 py-3" style={{ borderBottom: "1px solid #000" }}>
                   <div className="flex justify-between">
-                    <span>#{o.id.slice(0, 8).toUpperCase()}</span>
+                    <span>AQ-{o.id.replace(/-/g, "").slice(0, 8).toUpperCase()}</span>
                     <span>{o.status.toUpperCase()}</span>
                   </div>
                   <div className="opacity-60">{new Date(o.created_at).toLocaleDateString()}</div>
