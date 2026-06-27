@@ -76,7 +76,7 @@ export const CONTENT_FIELDS: { key: string; label: string; multiline?: boolean }
   { key: "contact_press", label: "CONTACT — PRESS EMAIL" },
   { key: "about_body", label: "ABOUT — BODY", multiline: true },
   { key: "shipping_body", label: "SHIPPING — BODY", multiline: true },
-  { key: "returns_body", label: "RETURNS — BODY", multiline: true },
+  
   { key: "terms_body", label: "TERMS OF SERVICE", multiline: true },
   { key: "privacy_body", label: "PRIVACY POLICY", multiline: true },
   { key: "sale_banner_text", label: "SALE BANNER TEXT (E.G. '80% OFF — ENDS SOON')" },
