@@ -67,7 +67,37 @@ export function useSiteContent() {
 }
 
 export async function saveContent(key: string, value: string) {
+  if (!value) {
+    return supabase.from("site_content").delete().eq("key", key);
+  }
   return supabase.from("site_content").upsert({ key, value }, { onConflict: "key" });
+}
+
+// --- Per-product sale + drop overrides (stored in site_content) ---
+export const productSaleKey = (id: string) => `psale_${id}`;
+export const productDropKey = (id: string) => `pdrop_${id}`;
+
+export function getProductSale(content: ContentMap, id: string): number {
+  const v = parseInt(content[productSaleKey(id)] ?? "", 10);
+  return Number.isFinite(v) && v > 0 && v < 100 ? v : 0;
+}
+export function getProductDrop(content: ContentMap, id: string): string | null {
+  const v = content[productDropKey(id)];
+  if (!v) return null;
+  const t = new Date(v).getTime();
+  if (Number.isNaN(t) || t <= Date.now()) return null;
+  return v;
+}
+
+/** Apply a percent discount to a price string, preserving its currency prefix/suffix. */
+export function discountedPrice(price: string, percent: number): string {
+  if (!percent) return price;
+  const m = price.match(/([\d.,]+)/);
+  if (!m) return price;
+  const num = parseFloat(m[1].replace(/,/g, ""));
+  if (!Number.isFinite(num)) return price;
+  const next = (num * (100 - percent)) / 100;
+  return price.replace(m[1], next.toFixed(2));
 }
 
 export const CONTENT_FIELDS: { key: string; label: string; multiline?: boolean }[] = [
