@@ -115,11 +115,8 @@ function SuccessPage() {
           </div>
         )}
 
-        {tracking && (
-          <div className="text-[11px] tracking-widest">
-            TRACKING — {tracking}
-          </div>
-        )}
+
+
 
         <Link
           to="/account"
