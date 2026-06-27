@@ -265,8 +265,8 @@ function ProductCard({
           <div className="w-full h-full" style={{ background: "#e5e3df" }} />
         )}
       </div>
-      <div className="flex flex-col items-center gap-1 pt-4 pb-2 px-2" style={{ fontSize: "0.88em" }}>
-        <div className="tracking-widest">{product.sku}</div>
+      <div className="flex flex-col items-center gap-1 pt-[14px] pb-2 px-2" style={{ fontSize: "0.88em" }}>
+        <div className="tracking-widest" style={{ fontWeight: 500 }}>{product.sku}</div>
         {soldOut && <div className="tracking-widest opacity-70" style={{ fontSize: "0.85em" }}>SOLD OUT</div>}
         {lowStock && <div className="tracking-widest opacity-60" style={{ fontSize: "0.85em" }}>LOW STOCK</div>}
       </div>
