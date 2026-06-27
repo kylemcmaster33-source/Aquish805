@@ -292,7 +292,7 @@ function CheckoutPage() {
             className="w-full py-4 text-xs tracking-widest disabled:opacity-40 aquish-btn-primary"
             style={{ background: "#000", color: "#fff", border: "none" }}
           >
-            {submitting ? "PLACING ORDER…" : "PLACE ORDER"}
+            {submitting ? "PLACING ORDER…" : `PLACE ORDER${items.length > 0 ? ` (${fmtGbp(totalGbp)})` : ""}`}
           </button>
           {!user && (
             <div className="text-xs opacity-70">
