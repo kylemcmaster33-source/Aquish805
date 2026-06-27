@@ -311,7 +311,7 @@ function DropBar({ target }: { target: string }) {
   const pad = (n: number) => String(n).padStart(2, "0");
   return (
     <div
-      className="absolute left-0 right-0 bottom-0 flex flex-col"
+      className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex flex-col px-4"
       style={{ pointerEvents: "none" }}
     >
       <div
