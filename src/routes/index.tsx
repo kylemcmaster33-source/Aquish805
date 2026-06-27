@@ -75,18 +75,14 @@ function Storefront() {
       >
         <div className="grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-3 md:px-4 min-h-12 py-2 gap-2">
           <div className="text-[11px] md:text-sm tracking-widest truncate">AQUISH</div>
-          {showCategories && (
-            <nav className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-1 max-w-full">
-              {categories.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setActiveCat(c.id)}
-                  className={`text-xs tracking-widest aquish-link whitespace-nowrap ${activeCat === c.id ? "underline underline-offset-4" : ""}`}
-                >
-                  {c.name}
-                </button>
-              ))}
-            </nav>
+          {showCategories ? (
+            <StackedCategories
+              categories={categories}
+              activeCat={activeCat}
+              setActiveCat={setActiveCat}
+            />
+          ) : (
+            <div className="hidden md:block" />
           )}
           <div className="flex justify-end items-center gap-3 md:gap-4 text-[10px] md:text-xs tracking-widest">
             <AccountLinks />
@@ -96,24 +92,18 @@ function Storefront() {
           </div>
         </div>
         {showCategories && categories.length > 0 && (
-          <nav
-            className="md:hidden flex justify-start gap-4 overflow-x-auto px-3 pb-2"
-            style={{ scrollbarWidth: "none" }}
-          >
-            {categories.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveCat(c.id)}
-                className={`text-[10px] tracking-widest aquish-link whitespace-nowrap ${activeCat === c.id ? "underline underline-offset-4" : ""}`}
-              >
-                {c.name}
-              </button>
-            ))}
-          </nav>
+          <div className="md:hidden px-3 pb-2">
+            <StackedCategories
+              categories={categories}
+              activeCat={activeCat}
+              setActiveCat={setActiveCat}
+              compact
+            />
+          </div>
         )}
       </header>
 
-      <main className={`flex-1 ${showCategories ? "pt-[72px] md:pt-12" : "pt-12"}`}>
+      <main className={`flex-1 ${showCategories ? "pt-[96px] md:pt-16" : "pt-12"}`}>
         <SaleBanner />
         {showDrop && <DropBanner />}
         {visible.length === 0 ? (
