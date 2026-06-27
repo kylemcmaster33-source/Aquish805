@@ -7,11 +7,10 @@ export function Footer() {
   if (visible.length === 0) return null;
   return (
     <footer
-      className="mt-3 px-2 py-1 flex flex-col md:flex-row md:items-center md:justify-between gap-0.5 md:gap-1"
-      style={{ borderTop: "1px solid #000", fontSize: 7, letterSpacing: "0.15em", lineHeight: 1.2 }}
+      className="mt-8 px-4 py-6"
+      style={{ fontSize: 11, letterSpacing: "0.25em", lineHeight: 1.4 }}
     >
-      <div>© AQUISH</div>
-      <nav className="flex flex-wrap gap-1.5 md:gap-2">
+      <nav className="flex flex-wrap justify-center gap-x-8 gap-y-2">
         {visible.map((l) => (
           <Link key={l.key} to={l.to} className="aquish-link">{l.label}</Link>
         ))}
