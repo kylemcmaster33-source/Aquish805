@@ -31,7 +31,6 @@ const STATUS_LABEL: Record<string, string> = {
 function SuccessPage() {
   const { order } = useSearch({ from: "/checkout/success" });
   const [status, setStatus] = useState<Status>("pending");
-  const [tracking, setTracking] = useState<string | null>(null);
 
   // Initial fetch + realtime subscription + slow poll fallback.
   useEffect(() => {
@@ -39,15 +38,14 @@ function SuccessPage() {
     let cancelled = false;
 
     const apply = (row: any) => {
-      if (cancelled || !row) return;
-      if (row.status) setStatus(row.status);
-      if (row.tracking_number) setTracking(row.tracking_number);
+      if (cancelled || !row?.status) return;
+      setStatus(row.status);
     };
 
     const fetchOnce = async () => {
       const { data } = await supabase
         .from("orders")
-        .select("status, tracking_number")
+        .select("status")
         .eq("id", order)
         .maybeSingle();
       apply(data);
@@ -73,6 +71,7 @@ function SuccessPage() {
       supabase.removeChannel(channel);
     };
   }, [order]);
+
 
   const paid = status !== "pending" && status !== "cancelled";
   const currentIdx = STATUS_STEPS.indexOf(status as any);
