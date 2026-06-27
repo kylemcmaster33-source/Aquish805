@@ -586,6 +586,7 @@ export function QuickView({
               </button>
             </div>
             <div className="text-xs opacity-70">SKU — {product.sku}</div>
+            <div className="text-xs opacity-70">PRODUCT ID — {product.id}</div>
             <div className="text-xs">{currency.format(product.price)}</div>
             <div
               className="flex flex-col gap-2 pt-3"
