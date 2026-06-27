@@ -15,7 +15,7 @@ import {
   migrateLocalToCloud,
 } from "@/lib/store";
 import { useAuth } from "@/hooks/use-auth";
-import { getMyAdminStatus } from "@/lib/auth.functions";
+import { getMyAdminStatus, claimAdminRole } from "@/lib/auth.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent, saveContent, CONTENT_FIELDS, UI_TOGGLES } from "@/lib/site-content";
 
@@ -29,7 +29,25 @@ function AdminGate() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const checkAdmin = useServerFn(getMyAdminStatus);
+  const claim = useServerFn(claimAdminRole);
   const [state, setState] = useState<"checking" | "ok" | "denied">("checking");
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const runCheck = async () => {
+    setState("checking");
+    try {
+      const r = await checkAdmin({});
+      if (r.isAdmin) {
+        await loadFromCloud();
+        await migrateLocalToCloud().catch(() => null);
+        setState("ok");
+      } else setState("denied");
+    } catch {
+      setState("denied");
+    }
+  };
 
   useEffect(() => {
     if (loading) return;
@@ -37,29 +55,50 @@ function AdminGate() {
       navigate({ to: "/auth" });
       return;
     }
-    checkAdmin({})
-      .then(async (r) => {
-        if (r.isAdmin) {
-          await loadFromCloud();
-          const m = await migrateLocalToCloud().catch(() => null);
-          if (m && m.migrated > 0) {
-            // brief notice in the console — admins see this once
-            console.log(`[AQUISH] Migrated ${m.migrated} local product(s) to the cloud.`);
-          }
-          setState("ok");
-        } else setState("denied");
-      })
-      .catch(() => setState("denied"));
+    runCheck();
   }, [user, loading]);
+
+  const submitCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!code.trim()) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      const r = await claim({ data: { code: code.trim() } });
+      if (r.ok) {
+        setMsg("ADMIN ACCESS GRANTED");
+        await runCheck();
+      } else {
+        setMsg("INCORRECT CODE");
+      }
+    } catch (err: any) {
+      setMsg(err?.message ?? "SERVER ERROR — SERVICE ROLE KEY NOT CONFIGURED");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   if (loading || state === "checking") {
     return <div className="min-h-screen aquish-bg flex items-center justify-center text-xs tracking-widest opacity-60">CHECKING…</div>;
   }
   if (state === "denied") {
     return (
-      <div className="min-h-screen aquish-bg flex flex-col items-center justify-center gap-4 text-xs tracking-widest">
+      <div className="min-h-screen aquish-bg flex flex-col items-center justify-center gap-4 text-xs tracking-widest px-6">
         <div>ADMIN ACCESS REQUIRED</div>
-        <Link to="/auth" className="aquish-link underline underline-offset-4">ENTER ADMIN CODE</Link>
+        <form onSubmit={submitCode} className="flex flex-col gap-3 w-full max-w-xs">
+          <input
+            type="password"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="ENTER ADMIN CODE"
+            className="aquish-input text-center"
+            autoFocus
+          />
+          <button type="submit" disabled={busy} className="py-3 text-xs tracking-widest disabled:opacity-40" style={{ background: "#000", color: "#fff", border: "none" }}>
+            {busy ? "…" : "SUBMIT"}
+          </button>
+          {msg && <div className="text-center opacity-80">{msg}</div>}
+        </form>
         <button onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/auth" }))} className="aquish-link">SIGN OUT</button>
         <Link to="/" className="aquish-link">← STOREFRONT</Link>
       </div>
