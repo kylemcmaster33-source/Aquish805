@@ -180,8 +180,9 @@ function StackedCategories({
     i += n;
     p += 1;
   }
-  // Categories sit ~5% larger than the SKU label on the product cards.
-  const fontSize = compact ? 13 : 16;
+  // Categories sit ~25% larger than the SKU label on the product cards.
+  // SKU renders at ~14px (body 16px * 0.88em); categories therefore ~17.5px desktop.
+  const fontSize = compact ? 14 : 18;
   return (
     <nav
       className={compact ? "flex flex-col items-center gap-1" : "hidden md:flex flex-col items-center gap-1"}
