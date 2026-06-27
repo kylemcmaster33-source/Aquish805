@@ -181,14 +181,15 @@ function StackedCategories({
     p += 1;
   }
   // Categories sit ~5% larger than the SKU label on the product cards.
-  const fontSize = compact ? 11 : 13;
+  const fontSize = compact ? 13 : 16;
   return (
     <nav
       className={compact ? "flex flex-col items-center gap-1" : "hidden md:flex flex-col items-center gap-1"}
       aria-label="Categories"
     >
       {rows.map((row, idx) => (
-        <div key={idx} className="flex justify-center gap-x-6">
+        <div key={idx} className="flex justify-center gap-x-3">
+
           {row.map((c) => {
             const isActive = activeCat === c.id;
             return (
