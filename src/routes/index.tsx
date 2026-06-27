@@ -76,7 +76,7 @@ function Storefront() {
         <div className="grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-3 md:px-4 h-12 gap-2">
           <div className="text-[11px] md:text-sm tracking-widest truncate">AQUISH</div>
           {showCategories && (
-            <nav className="hidden md:flex justify-center gap-6 overflow-x-auto">
+            <nav className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-1 max-w-full">
               {categories.map((c) => (
                 <button
                   key={c.id}
