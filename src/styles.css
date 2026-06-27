@@ -141,16 +141,16 @@
     background-color: #fffafa;
     color: #000;
     font-family: "Suisse Int'l", "Suisse Intl", "Inter", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    font-weight: 350;
-    letter-spacing: 0.0238em;
+    font-weight: 600;
+    letter-spacing: 0.02023em;
   }
 
-  /* Tailwind tracking utilities: 30% reduction from default, then a further 15% reduction (overall ~0.595×) */
-  .tracking-tight { letter-spacing: -0.0153em; }
+  /* Tailwind tracking utilities: previous values × 0.85 (further 15% reduction) */
+  .tracking-tight { letter-spacing: -0.013em; }
   .tracking-normal { letter-spacing: 0; }
-  .tracking-wide { letter-spacing: 0.0153em; }
-  .tracking-wider { letter-spacing: 0.0298em; }
-  .tracking-widest { letter-spacing: 0.0595em;
+  .tracking-wide { letter-spacing: 0.013em; }
+  .tracking-wider { letter-spacing: 0.0253em; }
+  .tracking-widest { letter-spacing: 0.0506em;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
   }
