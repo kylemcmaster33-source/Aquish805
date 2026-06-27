@@ -111,7 +111,7 @@ function SuccessPage() {
 
         {order && (
           <div className="text-[10px] tracking-widest opacity-50 pt-2">
-            ORDER {order.slice(0, 8).toUpperCase()}
+            ORDER NUMBER — AQ-{order.replace(/-/g, "").slice(0, 8).toUpperCase()}
           </div>
         )}
 
