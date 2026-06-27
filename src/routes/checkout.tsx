@@ -5,6 +5,7 @@ import { useStore, clearBag, loadFromCloud } from "@/lib/store";
 import { useCurrency, parsePrice, convertAmount } from "@/lib/currency";
 import { useAuth } from "@/hooks/use-auth";
 import { validateDiscount, createOrder } from "@/lib/commerce.functions";
+import { useSiteContent, getProductSale, discountedPrice } from "@/lib/site-content";
 
 
 export const Route = createFileRoute("/checkout")({
@@ -70,15 +71,18 @@ function CheckoutPage() {
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { content } = useSiteContent();
   const items = useMemo(
     () =>
       bag.map((b, i) => {
         const p = products.find((pp) => pp.id === b.productId);
         const c = p?.colors.find((cc) => cc.id === b.colorId);
-        const parsed = p ? parsePrice(p.price) : null;
+        const salePct = p ? getProductSale(content, p.id) : 0;
+        const effective = p && salePct > 0 ? discountedPrice(p.price, salePct) : p?.price ?? "";
+        const parsed = effective ? parsePrice(effective) : null;
         return { i, b, p, c, parsed };
       }),
-    [bag, products],
+    [bag, products, content],
   );
 
   // Subtotal in original currency code (display); subtotal in GBP (math/server)
