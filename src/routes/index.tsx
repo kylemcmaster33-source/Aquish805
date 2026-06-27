@@ -180,8 +180,9 @@ function StackedCategories({
     i += n;
     p += 1;
   }
-  // Categories sit ~5% larger than the SKU label on the product cards.
-  const fontSize = compact ? 13 : 16;
+  // Categories sit ~25% larger than the SKU label on the product cards.
+  // SKU renders at ~14px (body 16px * 0.88em); categories therefore ~17.5px desktop.
+  const fontSize = compact ? 14 : 18;
   return (
     <nav
       className={compact ? "flex flex-col items-center gap-1" : "hidden md:flex flex-col items-center gap-1"}
@@ -267,7 +268,7 @@ function ProductCard({
         )}
       </div>
       <div className="flex flex-col items-center gap-1 pt-[14px] pb-2 px-2" style={{ fontSize: "0.88em" }}>
-        <div className="tracking-widest" style={{ fontWeight: 500 }}>{product.sku}</div>
+        <div className="tracking-widest" style={{ fontWeight: 400 }}>{product.sku}</div>
         {soldOut && <div className="tracking-widest opacity-70" style={{ fontSize: "0.85em" }}>SOLD OUT</div>}
         {lowStock && <div className="tracking-widest opacity-60" style={{ fontSize: "0.85em" }}>LOW STOCK</div>}
       </div>
